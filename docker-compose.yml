@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  app:
+    image: golang:latest
+    container_name: contest-go
+    tty: true
+    volumes:
+      - ./src/contest:/go/src/contest
+      - ./src/template:/go/src/template
+      - ./make_contest.sh:/go/make_contest.sh
+    environment:
+      - "GOPATH=/go"
