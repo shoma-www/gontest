@@ -18,7 +18,6 @@ func solve(in io.Reader, out io.Writer) {
 	var bw = NewBufWriter(out)
 	defer bw.w.Flush()
 
-	// ### ここから ###
 	a, _ := strconv.Atoi(bs.Scan())
 
 	line := strings.Split(bs.Scan(), " ")
@@ -28,7 +27,6 @@ func solve(in io.Reader, out io.Writer) {
 	s := bs.Scan()
 
 	bw.Printf("%d %s\n", a + b + e, s)
-	// ### ここまでを変更 ###
 }
 
 // BufScanner original scanner
