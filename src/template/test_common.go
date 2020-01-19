@@ -23,33 +23,36 @@ type TestBook map[string]*TestPath
 // NewTestBook テストのファイルパスのマップを取得する
 func NewTestBook(dir string) TestBook {
 	files, _ := ioutil.ReadDir(dir)
-	m := make(TestBook)
+	tb := make(TestBook)
 
 	for _, file := range files {
 		if file.IsDir() {
-			continue
-		}
-		p := file.Name()
-		k := strings.Split(filepath.Base(p), ".")[0]
+			dirName := file.Name()
+			testPath := filepath.Join(dir, dirName)
+			testFiles, _ := ioutil.ReadDir(testPath)
 
-		if _, ok := m[k]; !ok {
-			m[k] = &TestPath{}
-		}
+			for _, test := range testFiles {
+				p := test.Name()
 
-		switch filepath.Ext(p) {
-		case ".in":
-			m[k].in = filepath.Join(dir, p)
-			break
-		case ".out":
-			m[k].exp = filepath.Join(dir, p)
-			break
-		case ".mid":
-			m[k].mid = filepath.Join(dir, p)
-			break
+				if _, ok := tb[dirName]; !ok {
+					tb[dirName] = &TestPath{}
+				}
+
+				switch p {
+				case "in":
+					tb[dirName].in = filepath.Join(testPath, p)
+					break
+				case "out":
+					tb[dirName].exp = filepath.Join(testPath, p)
+					break
+				case "mid":
+					tb[dirName].mid = filepath.Join(testPath, p)
+					break
+				}
+			}
 		}
 	}
-
-	return m
+	return tb
 }
 
 // GetTestList テスト一覧を取得
