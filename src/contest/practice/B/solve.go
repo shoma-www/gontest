@@ -22,7 +22,6 @@ const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 func solve(in io.Reader, out io.Writer) {
 	bs = NewBufScanner(in)
 	bw = NewBufWriter(out)
-	// defer bw.w.Flush()
 
 	n, q := getLine()
 
