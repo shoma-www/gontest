@@ -50,6 +50,34 @@ func (b *BufScanner) Scan() string {
 	return b.s.Text()
 }
 
+// IntScan Scan Data
+func (b *BufScanner) IntScan() int {
+	v, err := strconv.Atoi(b.Scan())
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+// SliceScan Scan Slice
+func (b *BufScanner) SliceScan() []string {
+	return strings.Split(b.Scan(), " ")
+}
+
+// IntSliceScan Scan Slice
+func (b *BufScanner) IntSliceScan() []int {
+	s := b.SliceScan()
+	a := make([]int, len(s))
+	for i := 0; i < len(s); i++ {
+		v, err := strconv.Atoi(s[i])
+		if err != nil {
+			panic(err)
+		}
+		a = append(a, v)
+	}
+	return a
+}
+
 // BufWriter original writer
 type BufWriter struct {
 	w *bufio.Writer
