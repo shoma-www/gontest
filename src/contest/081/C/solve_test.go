@@ -22,9 +22,9 @@ func TestSolve(t *testing.T) {
 		}
 
 		// 対話式
-		if InteractiveTestExecute(t, testName, tb[testName], ans, 2000, '!') {
-			success++
-		}
+		// if InteractiveTestExecute(t, testName, tb[testName], ans, 2000, '!') {
+		// 	success++
+		// }
 	}
 
 	fmt.Printf("All: %d Success: %d Error: %d\n", all, success, all-success)

@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"strings"
+	"sort"
 )
 
 func main() {
@@ -18,17 +18,34 @@ func solve(in io.Reader, out io.Writer) {
 	var bw = NewBufWriter(out)
 	defer bw.w.Flush()
 
-	// ### ここから ###
-	a, _ := strconv.Atoi(bs.Scan())
+	n, k := bs.IntScan(), bs.IntScan()
 
-	line := strings.Split(bs.Scan(), " ")
-	b, _ := strconv.Atoi(line[0])
-	e, _ := strconv.Atoi(line[1])
+	if n == k {
+		bw.Printf("0\n")
+		return
+	}
 
-	s := bs.Scan()
+	m := make(map[string]int)
+	for i := 0; i < n; i++ {
+		m[bs.Scan()]++
+	}
 
-	bw.Printf("%d %s\n", a + b + e, s)
-	// ### ここまでを変更 ###
+	if len(m) <= k {
+		bw.Printf("0\n")
+		return
+	}
+
+	arr := []int{}
+	for _, c := range m {
+		arr = append(arr, c)
+	}
+	sort.Ints(arr)
+
+	var cnt int
+	for i:=0; i < len(arr) - k;i++{
+		cnt += arr[i]
+	}
+	bw.Printf("%d\n", cnt)
 }
 
 // BufScanner original scanner
@@ -39,6 +56,8 @@ type BufScanner struct {
 // NewBufScanner constructer
 func NewBufScanner(in io.Reader) *BufScanner {
 	s := bufio.NewScanner(in)
+	s.Buffer(make([]byte, 1024), 1e+9)
+	s.Split(bufio.ScanWords)
 	return &BufScanner{
 		s: s,
 	}
@@ -48,6 +67,15 @@ func NewBufScanner(in io.Reader) *BufScanner {
 func (b *BufScanner) Scan() string {
 	b.s.Scan()
 	return b.s.Text()
+}
+
+// IntScan Scan Data
+func (b *BufScanner) IntScan() int {
+	v, err := strconv.Atoi(b.Scan())
+	if err != nil {
+		panic(err)
+	}
+	return v
 }
 
 // BufWriter original writer
