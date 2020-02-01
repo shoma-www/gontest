@@ -26,43 +26,35 @@ func solve(in io.Reader, out io.Writer) {
 	}
 
 	answers := []answer{}
-	start := 0
-	end := len(as)
-	for {
-		max := maxIndex(as[start:end]) + start
-		min := minIndex(as[start:end]) + start
-
-		if abs(as[max]) >= abs(as[min]) {
-			for i := max + 1; i < n; i++ {
-				for {
-					if as[max] <= as[i] && as[i - 1] <= as[i] {
-						break
-					}
-					as[i] += as[i - 1]
-					answers = append(answers, answer{x: i, y: i+1})
-				}
-			}
-			end = max
-		} else {
-			for i := min - 1; i >= 0; i-- {
-				for {
-					if as[min] >= as[i] && as[i + 1] >= as[i] {
-						break
-					}
-					as[i] += as[i + 1]
-					answers = append(answers, answer{x: i + 2, y: i+1})
-				}
-			}
-			start = min + 1
+	max := maxIndex(as)
+	min := minIndex(as)
+	if abs(as[max]) >= abs(as[min]) {
+		val := as[max]
+		for i := 0; i < n; i++ {
+			as[i] += val
+			answers = append(answers, answer{x: max, y: i})
 		}
-		if end - start < 1 {
-			break
+
+		for i := 0; i < n - 1; i++ {
+			as[i+1] += as[i]
+			answers = append(answers, answer{x: i, y: i+1})
+		}
+	} else {
+		val := as[min]
+		for i := 0; i < n; i++ {
+			as[i] += val
+			answers = append(answers, answer{x: min, y: i})
+		}
+
+		for i := n-1; i > 0; i-- {
+			as[i-1] += as[i]
+			answers = append(answers, answer{x: i, y: i-1})
 		}
 	}
 
 	bw.Printf("%d\n", len(answers))
 	for _, a := range answers {
-		bw.Printf("%d %d\n", a.x, a.y)
+		bw.Printf("%d %d\n", a.x+1, a.y+1)
 	}
 }
 
