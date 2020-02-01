@@ -1,1 +1,1 @@
-# プロコン用プロジェクト
+# AtCoder Studying

@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"strings"
 )
 
 func main() {
@@ -18,20 +17,9 @@ func solve(in io.Reader, out io.Writer) {
 	var bw = NewBufWriter(out)
 	defer bw.w.Flush()
 
-	// ### ここから ###
-	a, _ := strconv.Atoi(bs.Scan())
 
-	line := strings.Split(bs.Scan(), " ")
-	b, _ := strconv.Atoi(line[0])
-	e, _ := strconv.Atoi(line[1])
-
-	s := bs.Scan()
-
-	bw.Printf("%d %s\n", a + b + e, s)
-	// ### ここまでを変更 ###
 }
 
-// BufScanner original scanner
 // BufScanner original scanner
 type BufScanner struct {
 	s *bufio.Scanner
