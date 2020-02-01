@@ -17,7 +17,12 @@ func solve(in io.Reader, out io.Writer) {
 	var bw = NewBufWriter(out)
 	defer bw.w.Flush()
 
+	x := bs.IntScan()
+	a := bs.IntScan()
+	b := bs.IntScan()
 
+	amari := (x - a) % b
+	bw.Printf("%d\n", amari)
 }
 
 // BufScanner original scanner
