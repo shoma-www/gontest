@@ -7,7 +7,9 @@ services:
     tty: true
     volumes:
       - ./src/contest:/go/src/contest
+      - ./src/algorithm:/go/src/algorithm
       - ./src/template:/go/src/template
       - ./make_contest.sh:/go/make_contest.sh
     environment:
       - "GOPATH=/go"
+      - "GO111MODULE=on"

@@ -17,7 +17,34 @@ func solve(in io.Reader, out io.Writer) {
 	var bw = NewBufWriter(out)
 	defer bw.w.Flush()
 
+	a := bs.IntScan()
+	b := bs.IntScan()
+	c := bs.IntScan()
+	x := bs.IntScan()
 
+	sum := 500 * a + 100 * b + 50 * c
+	if sum < x {
+		bw.Printf("0\n")
+		return
+	}
+
+	cnt := 0
+	for bg := 0; bg <= a; bg++ {
+		if 500 * bg + 100 * b + 50 * c < x {
+			continue
+		}
+		for md := 0; md <= b; md++ {
+			if 500 * bg + 100 * md + 50 * c < x {
+				continue
+			}
+			for sm := 0; sm <= c; sm++ {
+				if 500 * bg + 100 * md + 50 * sm == x {
+					cnt++
+				}
+			}
+		}
+	}
+	bw.Printf("%d\n", cnt)
 }
 
 // BufScanner original scanner
