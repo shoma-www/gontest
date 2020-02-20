@@ -6,9 +6,9 @@ services:
     container_name: contest-go
     tty: true
     volumes:
-      - ./src/contest:/go/src/contest
-      - ./src/algorithm:/go/src/algorithm
-      - ./src/template:/go/src/template
+      - ./contest:/go/src/contest
+      - ./algorithm:/go/src/algorithm
+      - ./template:/go/src/template
       - ./make_contest.sh:/go/make_contest.sh
     environment:
       - "GOPATH=/go"
