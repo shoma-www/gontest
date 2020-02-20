@@ -22,7 +22,7 @@ esac
 
 readonly CONTEST=$1"/"
 readonly LAST_TASK=$2
-readonly BASE_DIR="./src/contest/"
+readonly BASE_DIR="./contest/"
 
 # 開始位置判定
 start_task=1
