@@ -51,6 +51,36 @@ func TestPriorityQueue(t *testing.T) {
 				},
 			},
 		},
+		{
+			values: []pair{
+				pair{
+					value: "foo",
+					priority: 5,
+				},
+				pair{
+					value: "hoge",
+					priority: 1,
+				},
+				pair{
+					value: "var",
+					priority: 5,
+				},
+			},
+			expect: []pair{
+				pair{
+					value: "foo",
+					priority: 5,
+				},
+				pair{
+					value: "var",
+					priority: 5,
+				},
+				pair{
+					value: "hoge",
+					priority: 1,
+				},
+			},
+		},
 	}
 
 	for _, c := range testCase {
