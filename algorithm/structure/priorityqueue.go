@@ -1,12 +1,14 @@
 package structure
 
-import "container/heap"
+import (
+	"container/heap"
+)
 
 // Item 優先度付きキューのデータ
 type Item struct {
-	value string
-	priority int
-	index int
+	Value string
+	Priority int
+	Index int
 }
 
 // Items 優先度付きキューのデータ構造
@@ -17,21 +19,21 @@ func (it Items) Len() int { return len(it) }
 
 // Less 優先度を判定する
 func (it Items) Less(i, j int) bool {
-	return it[i].priority > it[j].priority
+	return it[i].Priority > it[j].Priority
 }
 
 // Swap インデクスを入れ替える
 func (it Items) Swap(i, j int) {
 	it[i], it[j] = it[j], it[i]
-	it[i].index = i
-	it[j].index = j
+	it[i].Index = i
+	it[j].Index = j
 }
 
 // Push 優先度付きキューに追加する
 func (it *Items) Push(x interface{}) {
 	n := len(*it)
 	item := x.(*Item)
-	item.index = n
+	item.Index = n
 	*it = append(*it, item)
 }
 
@@ -41,15 +43,15 @@ func (it *Items) Pop() interface{} {
 	n := len(old)
 	item := old[n-1]
 	old[n-1] = nil
-	item.index = -1
+	item.Index = -1
 	*it = old[0:n-1]
 	return item
 }
 
 func (it *Items) update(item *Item, value string, priority int) {
-	item.value = value
-	item.priority = priority
-	heap.Fix(it, item.index)
+	item.Value = value
+	item.Priority = priority
+	heap.Fix(it, item.Index)
 }
 
 // PriorityQueue 優先度付きキュー
