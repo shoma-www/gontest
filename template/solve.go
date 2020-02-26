@@ -13,10 +13,10 @@ func main() {
 }
 
 func solve(in io.Reader, out io.Writer) {
-	var bs = NewBufScanner(in)
-	var bw = NewBufWriter(out)
+	bs := NewBufScanner(in)
+	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-
+	bs.Scan()
 
 }
 
