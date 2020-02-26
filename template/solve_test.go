@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"path/filepath"
 	"testing"
+
+	"github.com/shoma-www/my-contest-go/common/test"
 )
 
 func TestSolve(t *testing.T) {
 	fmt.Println("########## Start Test. ##########")
 	dir, _ := filepath.Abs("./testdata")
-	tb := NewTestBook(dir)
+	tb := test.NewTestBook(dir)
 
 	all, success := 0, 0
 	for _, testName := range tb.GetTestList() {
@@ -17,12 +19,12 @@ func TestSolve(t *testing.T) {
 		all++
 
 		// 通常
-		if Execute(t, testName, tb[testName], 2000) {
-			success++
-		}
+		// if test.Execute(t, testName, tb[testName], 2000) {
+		// 	success++
+		// }
 
 		// 対話式
-		// if InteractiveTestExecute(t, testName, tb[testName], ans, 2000, '!') {
+		// if test.InteractiveTestExecute(t, testName, tb[testName], ans, 2000, '!') {
 		// 	success++
 		// }
 	}
