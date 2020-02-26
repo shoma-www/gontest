@@ -10,20 +10,20 @@ import (
 	"testing"
 )
 
-// TestPath テスト用
-type TestPath struct {
+// Path テスト用
+type Path struct {
 	in  string
 	exp string
 	mid string
 }
 
-// TestBook テスト一覧
-type TestBook map[string]*TestPath
+// Book テスト一覧
+type Book map[string]*Path
 
 // NewTestBook テストのファイルパスのマップを取得する
-func NewTestBook(dir string) TestBook {
+func NewTestBook(dir string) Book {
 	files, _ := ioutil.ReadDir(dir)
-	tb := make(TestBook)
+	tb := make(Book)
 
 	for _, file := range files {
 		if file.IsDir() {
@@ -35,7 +35,7 @@ func NewTestBook(dir string) TestBook {
 				p := test.Name()
 
 				if _, ok := tb[dirName]; !ok {
-					tb[dirName] = &TestPath{}
+					tb[dirName] = &Path{}
 				}
 
 				switch p {
@@ -56,7 +56,7 @@ func NewTestBook(dir string) TestBook {
 }
 
 // GetTestList テスト一覧を取得
-func (tb TestBook) GetTestList() []string {
+func (tb Book) GetTestList() []string {
 	keys := make([]string, 0, len(tb))
 	for k := range tb {
 		keys = append(keys, k)

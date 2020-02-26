@@ -12,7 +12,7 @@ import (
 )
 
 // Execute 通常テスト
-func Execute(t *testing.T, solve func(io.Reader, io.Writer), testName string, v *TestPath, limit int) (ok bool) {
+func Execute(t *testing.T, solve func(io.Reader, io.Writer), testName string, v *Path, limit int) (ok bool) {
 	in, _ := os.Open(v.in)
 	out := &bytes.Buffer{}
 	defer in.Close()

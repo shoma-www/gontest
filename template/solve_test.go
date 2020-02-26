@@ -33,6 +33,6 @@ func TestSolve(t *testing.T) {
 	fmt.Println("########## Finish Test. ##########")
 }
 
-func ans(buf *test.SyncBuffer, v *test.TestPath, q string) {
+func ans(buf *test.SyncBuffer, v *test.Path, q string) {
 
 }
