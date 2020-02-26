@@ -19,12 +19,12 @@ func TestSolve(t *testing.T) {
 		all++
 
 		// 通常
-		// if test.Execute(t, testName, tb[testName], 2000) {
+		// if test.Execute(t, solve, testName, tb[testName], 2000) {
 		// 	success++
 		// }
 
 		// 対話式
-		// if test.InteractiveTestExecute(t, testName, tb[testName], ans, 2000, '!') {
+		// if test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!') {
 		// 	success++
 		// }
 	}
@@ -33,6 +33,6 @@ func TestSolve(t *testing.T) {
 	fmt.Println("########## Finish Test. ##########")
 }
 
-func ans(buf *SyncBuffer, v *TestPath, q string) {
+func ans(buf *test.SyncBuffer, v *test.TestPath, q string) {
 
 }

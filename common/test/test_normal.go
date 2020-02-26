@@ -12,7 +12,7 @@ import (
 )
 
 // Execute 通常テスト
-func Execute(t *testing.T, k string, v *TestPath, limit int) (ok bool) {
+func Execute(t *testing.T, solve func(io.Reader, io.Writer), testName string, v *TestPath, limit int) (ok bool) {
 	in, _ := os.Open(v.in)
 	out := &bytes.Buffer{}
 	defer in.Close()
@@ -24,7 +24,7 @@ func Execute(t *testing.T, k string, v *TestPath, limit int) (ok bool) {
 		s := time.Now()
 		solve(in, out)
 		t := time.Since(s)
-		log(k, fmt.Sprintf("Elapsed Time %2.8f sec", t.Seconds()))
+		log(testName, fmt.Sprintf("Elapsed Time %2.8f sec", t.Seconds()))
 		exeCh <- "finish"
 	}()
 
@@ -33,7 +33,7 @@ func Execute(t *testing.T, k string, v *TestPath, limit int) (ok bool) {
 	case <- exeCh:// 実行完了
 		break
 	case <-ctx.Done():// タイムアウト
-		errorLog(t, k, "Time out !!")
+		errorLog(t, testName, "Time out !!")
 		return false
 	}
 
@@ -52,16 +52,16 @@ func Execute(t *testing.T, k string, v *TestPath, limit int) (ok bool) {
 
 		if aErr == io.EOF && eErr == io.EOF {
 			if !mismatch {
-				log(k, "Accepted!!")
+				log(testName, "Accepted!!")
 			}
 			break
 		} else if aErr == io.EOF {
 			ok = false
-			errorLog(t, k, "Execution result is less than expected.")
+			errorLog(t, testName, "Execution result is less than expected.")
 			break
 		} else if eErr == io.EOF {
 			ok = false
-			errorLog(t, k, "Execution result is more than expected.")
+			errorLog(t, testName, "Execution result is more than expected.")
 			break
 		}
 
@@ -69,9 +69,9 @@ func Execute(t *testing.T, k string, v *TestPath, limit int) (ok bool) {
 			if !mismatch {
 				ok = false
 				mismatch = true
-				errorLog(t, k, "Do not match expected value.")
+				errorLog(t, testName, "Do not match expected value.")
 			}
-			fmt.Printf(getSpaces(len(k)+4)+"line:%d expected=%s actual=%s\n", line, string(e), string(a))
+			fmt.Printf(getSpaces(len(testName)+4)+"line:%d expected=%s actual=%s\n", line, string(e), string(a))
 		}
 	}
 

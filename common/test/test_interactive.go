@@ -15,7 +15,7 @@ import (
 type Answer func(buf *SyncBuffer, v *TestPath, q string)
 
 // InteractiveTestExecute 対話型実行テスト
-func InteractiveTestExecute(t *testing.T, testName string, v *TestPath, answer Answer, limit int, endWord byte) (ok bool) {
+func InteractiveTestExecute(t *testing.T, solve func(io.Reader, io.Writer), testName string, v *TestPath, answer Answer, limit int, endWord byte) (ok bool) {
 	in := NewSyncBuffer()
 	out := NewSyncBuffer()
 	exeCh := make(chan string)
