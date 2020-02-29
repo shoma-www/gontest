@@ -23,6 +23,7 @@ esac
 readonly CONTEST=$1"/"
 readonly LAST_TASK=$2
 readonly BASE_DIR="./contest/"
+readonly TEMPLATE="./template/*"
 
 # 開始位置判定
 start_task=1
@@ -38,7 +39,7 @@ else
 fi
 
 if [ -e $BASE_DIR$CONTEST ]; then
-  echo "すでに{$CONTEST}ディレクトリが存在します"
+  echo "すでに$CONTESTディレクトリが存在します"
   exit 1
 else
   # コンテストのディレクトリを作成
@@ -46,6 +47,6 @@ else
 
   # 問題のディレクトリを作成
   eval mkdir $BASE_DIR$CONTEST{$start_task..$LAST_TASK}
-  eval echo $BASE_DIR$CONTEST{$start_task..$LAST_TASK} | xargs -n 1 cp -rv ./src/template/*
+  eval echo $BASE_DIR$CONTEST{$start_task..$LAST_TASK} | xargs -n 1 cp -rv $TEMPLATE
   exit 0
 fi
