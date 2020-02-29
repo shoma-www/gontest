@@ -16,8 +16,16 @@ func solve(in io.Reader, out io.Writer) {
 	bs := NewBufScanner(in)
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-	bs.Scan()
 
+	left := bs.IntScan() + bs.IntScan()
+	right := bs.IntScan() + bs.IntScan()
+	if left == right {
+		bw.Printf("Balanced")
+	} else if left > right {
+		bw.Printf("Left")
+	} else {
+		bw.Printf("Right")
+	}
 }
 
 // BufScanner original scanner
