@@ -12,4 +12,3 @@ services:
       - ./make_contest.sh:/go/make_contest.sh
     environment:
       - "GOPATH=/go"
-      - "GO111MODULE=on"
