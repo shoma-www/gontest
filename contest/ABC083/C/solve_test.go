@@ -18,15 +18,15 @@ func TestSolve(t *testing.T) {
 		fmt.Printf("%s:\n", testName)
 		all++
 
-		// 通常
-		// if test.Execute(t, solve, testName, tb[testName], 2000) {
-		// 	success++
-		// }
+		if t.Run(testName, func(t *testing.T){
+			// 通常
+			test.Execute(t, solve, testName, tb[testName], 2000)
 
-		// 対話式
-		// if test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!') {
-		// 	success++
-		// }
+			// 対話式
+			// test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!')
+		}) {
+			success++
+		}
 	}
 
 	fmt.Printf("All: %d Success: %d Error: %d\n", all, success, all-success)

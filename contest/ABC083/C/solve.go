@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"strconv"
 )
@@ -16,8 +17,50 @@ func solve(in io.Reader, out io.Writer) {
 	bs := NewBufScanner(in)
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-	bs.Scan()
+	x, y :=bs.IntScan(), bs.IntScan()
+	n := x
+	maxCount := 0
+	for !isPrime(n) && n < y - 1 {
+		count := countArray(n, y)
+		if maxCount < count {
+			maxCount = count
+		}
+		n++
+	}
+	count := countArray(n, y)
+	if maxCount < count {
+		maxCount = count
+	}
 
+	bw.Printf("%v", maxCount)
+}
+
+func isPrime(n int) bool {
+	if n < 2 {
+		return false
+	} else if n == 2 {
+		return true
+	} else if n % 2 == 0  {
+		return false
+	}
+
+	sNum := int(math.Sqrt(float64(n)))
+	for i := 3; i <= sNum; i += 2 {
+		if n % int(i) == 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func countArray(x, y int) int {
+	count := 0
+	for x <= y {
+		count++
+		x *= 2
+	}
+	return count
 }
 
 // BufScanner original scanner
