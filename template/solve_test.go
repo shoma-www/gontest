@@ -17,16 +17,15 @@ func TestSolve(t *testing.T) {
 	for _, testName := range tb.GetTestList() {
 		fmt.Printf("%s:\n", testName)
 		all++
+		if t.Run(testName, func(t *testing.T){
+			// 通常
+			// test.Execute(t, solve, testName, tb[testName], 2000)
 
-		// 通常
-		// if test.Execute(t, solve, testName, tb[testName], 2000) {
-		// 	success++
-		// }
-
-		// 対話式
-		// if test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!') {
-		// 	success++
-		// }
+			// 対話式
+			// test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!')
+		}) {
+			success++
+		}
 	}
 
 	fmt.Printf("All: %d Success: %d Error: %d\n", all, success, all-success)
