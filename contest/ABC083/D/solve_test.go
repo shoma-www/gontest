@@ -19,9 +19,9 @@ func TestSolve(t *testing.T) {
 		all++
 
 		// 通常
-		// if test.Execute(t, solve, testName, tb[testName], 2000) {
-		// 	success++
-		// }
+		if test.Execute(t, solve, testName, tb[testName], 2000) {
+			success++
+		}
 
 		// 対話式
 		// if test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!') {

@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -16,8 +17,36 @@ func solve(in io.Reader, out io.Writer) {
 	bs := NewBufScanner(in)
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-	bs.Scan()
+	s := strings.Split(bs.Scan(), "")
 
+	if strings.Count(strings.Join(s, ""), "0") == len(s) {
+		bw.Printf("%v", 0)
+		return
+	}
+
+	k := len(s) / 2
+	n := k + 1
+	for isPos(s, n) {
+		k = n
+		if n++; len(s) < n {
+			break
+		}
+	}
+
+	bw.Printf("%v", k)
+}
+
+func isPos(s []string, k int) bool {
+	start := len(s) - k
+	end := k - 1
+	var now string
+	if start - end == 0 {
+		now = s[start]
+	} else {
+		now = s[start+1]
+	}
+
+	return s[start] == s[end] && s[start] == now
 }
 
 // BufScanner original scanner
