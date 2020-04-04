@@ -18,16 +18,43 @@ func solve(in io.Reader, out io.Writer) {
 	defer bw.w.Flush()
 	k := bs.IntScan()
 
-	runrunCount := 0
+	q := make([]int64, 0)
 
-	var ans int64
-	for {
-		if k < 10 {
-			ans = int64(k)
-		}
+	/*
+	差が１の値は、一つ上の桁から「-1」、「+0」、「+1」した値がその桁になる
+	つまり、下２桁が同じなるように計算（10x+x%10）し、その前後±1がルンルンの値の範囲になる
+	これをqueueを使って再帰的に計算すると導出できる。
+
+	queueに1~9をenqueする。
+	その後、ポップしたxに下記を行う
+	１．10x+x%10-1!=9 のとき 10x+x%10-1をenque
+	２．10x+x%10をenque
+	３．10x+x%10+1!=0 のとき 10x+x%10+1をenque
+	上記をk回になるまで繰り返し行い、k回目にdequeした数値が結果
+	*/
+	for i:=1; i<10; i++ {
+		q = append(q, int64(i))
 	}
 
-	bw.Printf("%v", ans)
+	count := 0
+	for {
+		x := q[0]
+		q = q[1:]
+		count++
+		if count == k {
+			bw.Printf("%v", x)
+			return
+		}
+
+		midVal := 10 * x + x % 10
+		if (midVal - 1) % 10 != 9 {
+			q = append(q, midVal - 1)
+		}
+		q = append(q, midVal)
+		if (midVal + 1) % 10 != 0 {
+			q = append(q, midVal + 1)
+		}
+	}
 }
 
 
