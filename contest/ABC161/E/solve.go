@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -16,8 +17,65 @@ func solve(in io.Reader, out io.Writer) {
 	bs := NewBufScanner(in)
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-	bs.Scan()
+	/*
+	前から数えた時と後ろから数えたとき一致する箇所が必須になる
+	*/
+	n, k, c := bs.IntScan(), bs.IntScan(), bs.IntScan()
+	s := strings.Split(bs.Scan(), "")
 
+	l := make([]string, n)
+	r := make([]string, n)
+
+	var index int
+	var lCount int
+	lPos := []int{}
+	var rCount int
+
+	index = 0
+	for {
+		if s[index] == "o" {
+			l[index] = "o"
+			lCount++
+			lPos = append(lPos, index)
+			index += c
+		}
+		index++
+		if index >= n {
+			break
+		}
+	}
+
+	index = n - 1
+	for {
+		if s[index] == "o" {
+			ok := true
+			for i:=1; i<=c; i++ {
+				if index + i >= n {
+					break
+				}
+				if r[index+i] == "o" {
+					ok = false
+					break
+				}
+			}
+			if ok {
+				rCount++
+				r[index] = "o"
+			}
+		}
+		index--
+		if index < 0 {
+			break
+		}
+	}
+
+	if lCount == rCount && lCount == k {
+		for _, i := range lPos {
+			if l[i] == "o" && l[i] == r[i] {
+				bw.Printf("%v\n", i+1)
+			}
+		}
+	}
 }
 
 // BufScanner original scanner

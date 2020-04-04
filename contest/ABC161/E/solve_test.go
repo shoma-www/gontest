@@ -19,7 +19,7 @@ func TestSolve(t *testing.T) {
 		all++
 		if t.Run(testName, func(t *testing.T){
 			// 通常
-			// test.Execute(t, solve, testName, tb[testName], 2000)
+			test.Execute(t, solve, testName, tb[testName], 2000)
 
 			// 対話式
 			// test.InteractiveTestExecute(t, solve, testName, tb[testName], ans, 2000, '!')
