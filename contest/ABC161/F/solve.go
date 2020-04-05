@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"strconv"
 )
@@ -16,8 +17,45 @@ func solve(in io.Reader, out io.Writer) {
 	bs := NewBufScanner(in)
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-	bs.Scan()
+	n := bs.IntScan()
 
+	if n == 2 {
+		bw.Printf("1")
+		return
+	}
+
+	count := 2
+	var k int64
+	for k = 2; k <= int64(math.Sqrt(float64(n))); k++ {
+		// kがnの約数かどうかチェック
+		if isOne(n, k) {
+			count++
+		}
+
+		// √nより大きい約数をチェックする
+		t := n / k
+		// √n以下の場合、次のkに
+		if t <= k {
+			continue
+		}
+		if isOne(n, t) {
+			count++
+		}
+	}
+
+	bw.Printf("%v", count)
+}
+
+func isOne(n, k int64) bool {
+	x := n
+	for x >= k && x % k == 0 {
+		x /= k
+	}
+	// 割ったあまりが１、もしくはx=１の場合、対象
+	if x % k == 1 {
+		return true
+	}
+	return false
 }
 
 // BufScanner original scanner
@@ -42,8 +80,8 @@ func (b *BufScanner) Scan() string {
 }
 
 // IntScan Scan Data
-func (b *BufScanner) IntScan() int {
-	v, err := strconv.Atoi(b.Scan())
+func (b *BufScanner) IntScan() int64 {
+	v, err := strconv.ParseInt(b.Scan(), 10, 64)
 	if err != nil {
 		panic(err)
 	}
