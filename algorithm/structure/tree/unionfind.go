@@ -1,4 +1,4 @@
-package algorithm
+package tree
 
 // UnionFindTree 重み付き素集合データ構造
 // union by rank
