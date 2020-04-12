@@ -17,53 +17,41 @@ func solve(in io.Reader, out io.Writer) {
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
 	n, s := bs.IntScan(), bs.Scan()
-	type box struct {
-		index int
-		color string
-	}
-	r := make(map[int]int)
+
 	rcount := 0
-	b := make(map[int]int)
 	bcount := 0
-	g := make(map[int]int)
 	gcount := 0
 
 	for i:=1; i<=n; i++ {
 		switch(s[i-1]){
 		case 'R':
-			r[i] = 0
 			rcount++
 		case 'B':
-			b[i] = 0
 			bcount++
 		case 'G':
-			g[i] = 0
 			gcount++
 		}
 	}
 
-	for i:=1; i<=n; i++ {
-		switch(s[i-1]){
-		case 'R':
-			r[i] = rcount
-			rcount--
-		case 'B':
-			b[i] = bcount
-			bcount--
-		case 'G':
-			g[i] = gcount
-			gcount--
-		}
-	}
-
-	if len(r) == 0 || len(b) == 0 || len(g) == 0 {
+	if rcount == 0 || gcount == 0 || bcount == 0 {
 		bw.Printf("0")
 		return
 	}
 
-	for i:=1; i<=(n-2); i++ {
-		
+	var sum int64 = int64(rcount) * int64(gcount) * int64(bcount)
+	for i:=0; i<n-2; i++ {
+		for j:=i; i<n-1; j++ {
+			k := 2*j-i
+			if k >= n {
+				break
+			}
+			if s[i] != s[j] && s[j] != s[k] && s[i] != s[k] {
+				sum--
+			}
+		}
 	}
+
+	bw.Printf("%v", sum)
 }
 
 // BufScanner original scanner
