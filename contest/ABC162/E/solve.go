@@ -16,8 +16,38 @@ func solve(in io.Reader, out io.Writer) {
 	bs := NewBufScanner(in)
 	bw := NewBufWriter(out)
 	defer bw.w.Flush()
-	bs.Scan()
+	n, k := bs.IntScan(), bs.IntScan()
 
+	var mod int64 = 1000000000 + 7
+	d := make([]int64, k + 1)
+	for i:=1; i<=k; i++ {
+		d[i] = modpow(int64(k/i), mod, n)
+	}
+	for i:=k; i>=1; i-- {
+		for j:=2*i; j<=k; j+=i {
+			d[i] -= d[j]
+			d[i] = (d[i] + mod) % mod
+		}
+	}
+
+	var ans int64
+	for i:=1; i<=k; i++ {
+		ans += int64(i) * d[i] % mod
+		ans = (ans + mod) % mod
+	}
+	bw.Printf("%v\n", int(ans))
+}
+
+func modpow(x, mod int64, n int) int64 {
+	var res int64 = 1
+	for n > 0 {
+		if n & 1 == 1 {
+			res = res * x % mod
+		}
+		x = x * x % mod
+		n >>= 1
+	}
+	return res
 }
 
 // BufScanner original scanner
