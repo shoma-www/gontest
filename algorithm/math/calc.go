@@ -2,7 +2,6 @@ package math
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -63,6 +62,10 @@ func MultiBigInt(x, y string) (string, error) {
 // N桁×N桁のオーダーからN/2桁×N/2桁×3の計算量に圧縮
 // ひっ算を用いた掛け算の計算と組み合わせることで高速化が可能
 // O(N^1.59)
+// 例: 20201215 × 12345678 を、4桁 × 4桁に落とし込んだ場合
+// 2020 × 1234 × 10^8
+// + (1215 × 1234 + 2020 × 5678) × 10^4
+// + 1215 × 5678
 func KaratsubaMethod(x, y string) (string, error) {
 	return convertBigIntFunc(multiKaratsuba)(x, y)
 }
@@ -96,7 +99,6 @@ func multiBigInt(x, y bigInt) bigInt {
 }
 
 func multiKaratsuba(dx, dy bigInt) bigInt {
-	fmt.Println(dx, dy)
 	if len(dx) < 3 || len(dy) < 3 {
 		return multiBigInt(dx, dy)
 	}
@@ -116,20 +118,20 @@ func multiKaratsuba(dx, dy bigInt) bigInt {
 
 func addSubBigInt(fn func(a, b int) int) func(x, y bigInt) bigInt {
 	return func(x, y bigInt) bigInt {
-		x = append(bigInt{}, x...)
-		if len(x) < len(y) {
-			tmp := make(bigInt, len(y) - len(x))
-			x = append(x, tmp...)
-		} else if len(x) > len(y) {
-			tmp := make(bigInt, len(x) - len(y))
+		digitsAns := append(bigInt{}, x...)
+		if len(digitsAns) < len(y) {
+			tmp := make(bigInt, len(y) - len(digitsAns))
+			digitsAns = append(digitsAns, tmp...)
+		} else if len(digitsAns) > len(y) {
+			tmp := make(bigInt, len(digitsAns) - len(y))
 			y = append(y, tmp...)
 		}
 
 		for i := 0; i < len(y); i++ {
-			x[i] = fn(x[i], y[i])
+			digitsAns[i] = fn(digitsAns[i], y[i])
 		}
 
-		return carryAndFix(x)
+		return carryAndFix(digitsAns)
 	}
 }
 
