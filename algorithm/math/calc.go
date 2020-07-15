@@ -58,6 +58,11 @@ func MultiBigInt(x, y string) (string, error) {
 	return convertBigIntFunc(multiBigInt)(x, y)
 }
 
+// DivBigInt 大きな数値の割り算を行う
+func DivBigInt(x, y string) (string, error) {
+	return convertBigIntFunc(divBigInt)(x, y)
+}
+
 // KaratsubaMethod カラツバ法
 // N桁×N桁のオーダーからN/2桁×N/2桁×3の計算量に圧縮
 // ひっ算を用いた掛け算の計算と組み合わせることで高速化が可能
@@ -96,6 +101,45 @@ func multiBigInt(x, y bigInt) bigInt {
 		}
 	}
 	return carryAndFix(digitsAns)
+}
+
+func divBigInt(x, y bigInt) bigInt {
+	d := len(x) - len(y)
+	if d < 0 { return bigInt{0} }
+	if compareBigInt(x[d:], y) >= 0 {
+		d++
+	}
+	if d == 0 { return bigInt{0} }
+
+	remain := x[d - 1:]
+	ans := make(bigInt, d)
+	for i := d - 1; i >= 0; i-- {
+		ans[i] = 9
+		for j := 1; j <= 9; j++ {
+			tmp := multiBigInt(y, bigInt{j})
+			if compareBigInt(tmp, remain) == 1{
+				ans[i] = j - 1
+				break
+			}
+		}
+		tmpResult := multiBigInt(y, bigInt{ans[i]})
+		remain = subBigInt(remain, tmpResult)
+		if i >= 1 {
+			remain = append(bigInt{x[i - 1]}, remain...)
+		}
+	}
+	return ans
+}
+
+func compareBigInt(x, y bigInt) int {
+	nx, ny := len(x), len(y)
+	if nx > ny { return 1 }
+	if nx < ny { return -1 }
+	for i := nx - 1; i >= 0; i-- {
+		if x[i] > y[i] { return 1 }
+		if x[i] < y[i] { return -1 }
+	}
+	return 0
 }
 
 func multiKaratsuba(dx, dy bigInt) bigInt {
