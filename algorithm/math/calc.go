@@ -197,6 +197,13 @@ func convertBigIntFunc(fn func(a, b bigInt) bigInt) func(x, y string)(string, er
 
 // carryAndFix bigIntに対して繰り上がり/繰り下がり処理を行う
 func carryAndFix(digits bigInt) bigInt {
+	// マイナス対応
+	isM := digits[len(digits) - 1] < 0
+	if isM {
+		for i := 0; i < len(digits); i++ {
+			digits[i] *= -1
+		}
+	}
 	// 各桁に対して繰り上がり/繰り下がり処理
 	for i := 0; i < len(digits) - 1; i++ {
 		// 繰り上がり
@@ -225,6 +232,13 @@ func carryAndFix(digits bigInt) bigInt {
 	// 最上位の桁がゼロの場合、桁を下げる
 	for len(digits) > 1 && digits[len(digits) - 1] == 0 {
 		digits = digits[:len(digits) - 1]
+	}
+
+	// マイナス対応
+	if isM {
+		for i := 0; i < len(digits); i++ {
+			digits[i] *= -1
+		}
 	}
 
 	return digits
