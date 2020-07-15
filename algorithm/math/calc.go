@@ -2,7 +2,9 @@ package math
 
 import (
 	"errors"
+	"math"
 	"strconv"
+	"strings"
 )
 
 // Euclidean ユークリッドの互除法
@@ -76,6 +78,51 @@ func KaratsubaMethod(x, y string) (string, error) {
 }
 
 type bigInt []int
+
+// stringTobigInt 数値の文字列を受け取って、各桁ごとの配列を返却する
+// in:"12345" ⇒ out:[5, 4, 3, 2, 1]
+func stringTobigInt(s string) (bigInt, error) {
+	base := 1
+	if strings.Contains(s, "-") {
+		s = s[1:]
+		base = -1
+	}
+	n := len(s)
+	d := make(bigInt, n)
+	var err error
+	for i, c := range s {
+		d[n-i-1], err = strconv.Atoi(string(c))
+		if err != nil {
+			return nil, err
+		}
+		d[n-i-1] *= base
+	}
+	return d[:n], nil
+}
+
+// bigIntTostring bigIntを受け取って、数値の文字列を返却する
+// in:[5, 4, 3, 2, 1] ⇒ out:"12345"
+func bigIntTostring(b bigInt) string {
+	n := len(b)
+	s := ""
+	if n == 0 {
+		return s
+	}
+	isM := false
+	s += strconv.Itoa(b[n-1])
+	if len(s) > 1 {
+		isM = true
+	}
+	for i := n-2; i >= 0; i-- {
+		s += strconv.Itoa(b[i])
+	}
+	if isM {
+		tmp := s
+		s = strings.Replace(tmp, "-", "", -1)
+		s = "-" + s
+	}
+	return s
+}
 
 func addBigInt(x, y bigInt) bigInt {
 	fn := func(a, b int) int {
@@ -244,29 +291,70 @@ func carryAndFix(digits bigInt) bigInt {
 	return digits
 }
 
-// stringTobigInt 数値の文字列を受け取って、各桁ごとの配列を返却する
-// in:"12345" ⇒ out:[5, 4, 3, 2, 1]
-func stringTobigInt(s string) (bigInt, error) {
-	n := len(s)
-	d := make(bigInt, n)
-	var err error
-	for i, c := range s {
-		d[n-i-1], err = strconv.Atoi(string(c))
-		if err != nil {
-			return nil, err
+// ToomCook Toom-Cook法
+// 
+// O(N^1.46)
+func ToomCook(x, y string) (string, error) {
+	return convertBigIntFunc(multiToomCook3)(x, y)
+}
+
+func multiToomCook3(dx, dy bigInt) bigInt {
+	if len(dx) < 9 || len(dy) < 9 {
+		return multiKaratsuba(dx, dy)
+	}
+
+	n := int(math.Round(float64(len(dx)) / 3))
+	p := createEquations(dx, n)
+	q := createEquations(dy, n)
+
+	r2 := multiToomCook3(p("2"), q("2"))
+	r1 := multiToomCook3(p("1"), q("1"))
+	r0 := multiToomCook3(p("0"), q("0"))
+	rm1 := multiToomCook3(p("-1"), q("-1"))
+	rm2 := multiToomCook3(p("-2"), q("-2"))
+
+	c0 := r0
+	c1 := divBigInt(multiAddBigInt(rm2, multiInt("-8", rm1), multiInt("8", r1), multiInt("-1", r2)), bigInt{2, 1})
+	c2 := divBigInt(multiAddBigInt(multiInt("-1", rm2), multiInt("16", rm1), multiInt("-30", r0), multiInt("16", r1), multiInt("-1", r2)), bigInt{4, 2})
+	c3 := divBigInt(multiAddBigInt(multiInt("-1", rm2), multiInt("2", rm1), multiInt("-2", r1), r2), bigInt{2, 1})
+	c4 := divBigInt(multiAddBigInt(rm2, multiInt("-4", rm1), multiInt("6", r0), multiInt("-4", r1), r2), bigInt{4, 2})
+
+	return multiAddBigInt(
+		multiBigInt(c4, powBigInt(bigInt{0, 1}, 4)),
+		multiBigInt(c3, powBigInt(bigInt{0, 1}, 3)),
+		multiBigInt(c2, powBigInt(bigInt{0, 1}, 2)),
+		multiBigInt(c1, bigInt{0, 1}),
+		c0)
+}
+
+func createEquations(d bigInt, n int) func(x string) bigInt {
+	a := d[2*n:]
+	b := d[n:2*n]
+	c := d[:n]
+
+	return func(x string) bigInt {
+			input, _ := stringTobigInt(x)
+			return multiAddBigInt(multiBigInt(a, powBigInt(input, 2)), multiBigInt(b, input), c)
 		}
-	}
-	return d, nil
 }
 
-// bigIntTostring bigIntを受け取って、数値の文字列を返却する
-// in:[5, 4, 3, 2, 1] ⇒ out:"12345"
-func bigIntTostring(b bigInt) string {
-	n := len(b)
-	s := ""
-	for i := n-1; i >= 0; i-- {
-		s += strconv.Itoa(b[i])
-	}
-	return s
+func multiInt(a string, x bigInt) bigInt {
+	mul, _ := stringTobigInt(a)
+	return multiBigInt(mul, x)
 }
 
+func multiAddBigInt(inputs ...bigInt) bigInt {
+	result := bigInt{0}
+	for _, input := range inputs {
+		result = addBigInt(result, input)
+	}
+	return result
+}
+
+func powBigInt(base bigInt, n int) bigInt {
+	result := bigInt{1}
+	for i := 1; i < n; i++ {
+		result = multiBigInt(result, base)
+	}
+	return result
+}
