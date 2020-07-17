@@ -279,3 +279,38 @@ func TestToomCook(t *testing.T) {
 		}
 	}
 }
+
+func TestNewtonRaphson(t *testing.T) {
+	testCases := []struct {
+		x string
+		y string
+		ans string
+	}{
+		{
+			x: "3",
+			y: "2",
+			ans: "1",
+		},
+		{
+			x: "10",
+			y: "5",
+			ans: "2",
+		},
+		{
+			x: "1111111",
+			y: "4649",
+			ans: "239",
+		},
+	}
+
+	for _, c := range testCases {
+		ans, err := NewtonRaphson(c.x, c.y)
+		if err != nil {
+			t.Errorf("Invalid Values %s", err)
+		}
+		fmt.Println(ans)
+		if c.ans != ans {
+			t.Errorf("unexpected value exp:%s, act:%s", c.ans, ans)
+		}
+	}
+}

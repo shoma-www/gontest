@@ -150,6 +150,8 @@ func multiBigInt(x, y bigInt) bigInt {
 	return carryAndFix(digitsAns)
 }
 
+// divBigInt
+// 割り算のひっ算
 func divBigInt(x, y bigInt) bigInt {
 	d := len(x) - len(y)
 	if d < 0 { return bigInt{0} }
@@ -190,10 +192,15 @@ func compareBigInt(x, y bigInt) int {
 }
 
 func multiKaratsuba(dx, dy bigInt) bigInt {
-	if len(dx) < 3 || len(dy) < 3 {
+	// TODO: ばぐってる
+	nx, ny := len(dx), len(dy)
+	if (nx < 3 || ny < 3)  {
 		return multiBigInt(dx, dy)
 	}
-	n := len(dx) / 2
+	n := nx / 2
+	if nx < ny {
+		n = ny / 2
+	}
 	tmp := make(bigInt, n)
 
 	a := multiKaratsuba(dx[n:], dy[n:])
@@ -292,13 +299,17 @@ func carryAndFix(digits bigInt) bigInt {
 }
 
 // ToomCook Toom-Cook法
-// 
+// カラツバ法を拡張子し、N/3桁の掛け算５つに落とし込んだ
+// 連立方程式に見立てて各位の係数を計算する
+// 分割数を増やして、計算量を下げることはできるが、限界がある
+// N桁の数値を分割する
 // O(N^1.46)
 func ToomCook(x, y string) (string, error) {
 	return convertBigIntFunc(multiToomCook3)(x, y)
 }
 
 func multiToomCook3(dx, dy bigInt) bigInt {
+	// TODO: ばぐってる
 	if len(dx) < 9 || len(dy) < 9 {
 		return multiKaratsuba(dx, dy)
 	}
@@ -357,4 +368,60 @@ func powBigInt(base bigInt, n int) bigInt {
 		result = multiBigInt(result, base)
 	}
 	return result
+}
+
+// NewtonRaphson ニュートン・ラフソン法
+func NewtonRaphson(x, y string) (string, error) {
+	return convertBigIntFunc(newtonRaphson)(x, y)
+}
+
+func newtonRaphson(x, y bigInt) bigInt {
+	// 逆数の精度
+	n := len(x) + len(y) + 1
+	yr, nr := reciprocl(y)
+	yr = yr[nr-n:]
+
+	result := bigInt{ 0 }
+	real := multiBigInt(x, yr)
+	if len(real) > n {
+		result = real[n:]
+		tmp := append(bigInt{}, result...)
+		tmp = addBigInt(tmp, bigInt{ 1 })
+		for compareBigInt(x, multiBigInt(y, tmp)) >= 0 {
+			result = tmp
+			tmp = addBigInt(tmp, bigInt{ 1 })
+		}
+	}
+
+	return result
+}
+
+// reciprocl 逆数をもとめるよ
+func reciprocl(x bigInt) (bigInt, int) {
+	i:= 0
+	init := 4
+	na := len(x)
+	n := 32
+	a := bigInt{1}
+	for na < n {
+		tmp, tmpn := calcApprox(a, x, na)
+		if init < i {
+			na *= 2
+		}
+		a = tmp[tmpn-na:]
+		i++
+	}
+
+	return a, na
+}
+
+func calcApprox(a, b bigInt, n int) (bigInt, int) {
+	tmp1 := multiBigInt(bigInt{2}, a)
+	zeros := bigInt{}
+	for i := 0; i < n; i++ {
+		zeros = append(zeros, 0)
+	}
+	tmp1 = append(zeros, tmp1...)
+	tmp2 := multiBigInt(multiBigInt(a, a), b)
+	return subBigInt(tmp1, tmp2), 2 * n
 }
